@@ -30,6 +30,7 @@ export function App() {
   const [player, setPlayer] = useState("X");
   const [winner, setWinner] = useState("");
   const [moves, setMoves] = useState([{ boardState, lines }]);
+  const [count, setCount] = useState(0);
 
   function checkWinner(setField: keyof typeof board) {
     const opponent = player === "X" ? "O" : "X";
@@ -60,9 +61,10 @@ export function App() {
       if (diagonalTwo.length === 3 && !diagonalTwo.includes(opponent))
         setWinner(player);
     }
-    moves.push({ boardState, lines });
-    setMoves(moves);
-    console.log(moves);
+    const currentMoves = moves.slice(0, count);
+    currentMoves.push({ boardState, lines });
+    setMoves(currentMoves);
+    setCount(count + 1);
   }
 
   return (
@@ -90,17 +92,22 @@ export function App() {
           ))}
         </div>
       </div>
-      <ol className="pl-8 pt-16 flex flex-col">
+      <ol className="pl-8 pt-16 grid border border-blue-200 h-54 w-auto auto-cols-max gap-2 list-inside">
         {moves.map((move, index) => (
           <button
-            className="cursor-pointer"
+            className="cursor-pointer p-2 rounded-lg h-min border w-max border-white"
             key={index}
             onClick={() => {
               setScore(move.lines);
               setBoardState(move.boardState);
+              setCount(index + 1);
             }}
           >
-            <li className="list-decimal">go to move {index + 1}</li>
+            {index === 0 ? (
+              <li className="list-decimal">Go to game start</li>
+            ) : (
+              <li className="list-decimal">go to move #{index}</li>
+            )}
           </button>
         ))}
       </ol>
